@@ -4,7 +4,10 @@ import numpy as np
 #Read in image and convert it to gray, add blur
 image = cv2.imread("opencv_frame3.png")
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-blurred = cv2.GaussianBlur(gray, (3, 3), 0)
+blurred = cv2.GaussianBlur(gray, (7, 7), 0)
+
+cv2.imshow('blur', blurred)
+
 canny = cv2.Canny(blurred, 20, 40)
 
 #Dilate image to open up
