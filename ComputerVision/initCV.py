@@ -66,21 +66,21 @@ def computeContours(frame):
         index += 1
 
     
-    colorDetect(contours, epsilon, approx, area)
+    #colorDetect(contours, epsilon, approx, area)
 
     return frame2;
 
 
-def colorDetect(contours, epsilon, approx, area):
-	cnt = contours	
-	print(cnt[0])
+# def colorDetect(contours, epsilon, approx, area):
+# 	cnt = contours	
+# 	print(cnt[0])
 
-	for c in contours:
-		A1=cv2.contourArea(c)
-		contour_id = contour_id+1
+# 	for c in contours:
+# 		A1=cv2.contourArea(c)
+# 		contour_id = contour_id+1
 
-		if A1 < 3000 and A1 > 1000:
-			perimeter = cv2.arcLength(c, True)
+# 		if A1 < 3000 and A1 > 1000:
+# 			perimeter = cv2.arcLength(c, True)
 
 
 
