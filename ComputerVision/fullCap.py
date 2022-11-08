@@ -1,30 +1,10 @@
 import cv2
 import numpy as np
 import math
+img_counter = 0
+capture = cv2.VideoCapture(0)
 
-capture = cv2.VideoCapture(1)
-
-def callback(num):
-    return
-
-cv2.namedWindow('Settings', 0)
-cv2.createTrackbar('Canny Thres 1', 'Settings', 87, 500, callback)
-cv2.createTrackbar('Canny Thres 2', 'Settings', 325, 500, callback)
-cv2.createTrackbar('Blur kSize', 'Settings', 10, 100, callback)
-cv2.createTrackbar('Blur Sigma X', 'Settings', 100, 100, callback)
-cv2.createTrackbar('Dilation Iterations', 'Settings', 3, 20, callback)
-cv2.createTrackbar('Blob Area', 'Settings', 260, 1000, callback)
-
-cv2.createTrackbar('Epsilon Percent', 'Settings', 6, 100, callback)
-cv2.createTrackbar('Max Value', 'Settings', 255, 255, callback)
-cv2.createTrackbar('Block Size', 'Settings', 6, 20, callback)
-cv2.createTrackbar('C', 'Settings', 2, 255, callback)
-cv2.createTrackbar('Contour R', 'Settings', 0, 255, callback)
-cv2.createTrackbar('Contour G', 'Settings', 255, 255, callback)
-cv2.createTrackbar('Contour B', 'Settings', 0, 255, callback)
-cv2.createTrackbar('Exposure', 'Settings', 5, 12, callback)
-
-def computeContours(frame):
+def findCubies(frame):
     frame2 = frame.copy()
     #frame2 = cv2.imread("opencv_frame3.png")
     gausBlur = 13
@@ -62,81 +42,29 @@ def computeContours(frame):
                 #print(avgColor)
                 cv2.drawContours(frame, [approx], 0, (0, 255, 0), 3)
 
-                blue = avgColor[0]/255
-                green = avgColor[1]/255
-                red = avgColor[2]/255
-                cmax =max(red, blue, green)
-                cmin = min(red, blue, green)
-                diff = cmax - cmin
-                hue =-1
-                saturation = -1
-
-                if(cmax==cmin):
-                    hue=0
-                elif(cmax==red):
-                    hue = (60*((green-blue)/diff)+360)%360
-                elif(cmax==green):
-                    hue = (60*((blue-red)/diff)+120)%360
-                elif(cmax == blue):
-                    hue = (60*((red-green)/diff)+240)%360
-
-
-                if(cmax==0):
-                    saturation=0
-                else:
-                    saturation=(diff/cmax)*100
-
-                value = cmax*100
-
-                avgColor[0], avgColor[1], avgColor[2] = hue, saturation, value
-                face = []
-                print(hue, saturation, value)
-                if 190 <= avgColor[0] <= 250 and 55 <= avgColor[1] <= 95 and 35 <= avgColor[2] <= 85:
-                    print('blue detected at', x, y)
-                    outputArr.append('blue')
-                elif (345 <= avgColor[0] or avgColor[0] <= 11) and 50 <= avgColor[1] <= 90 and 45 <= avgColor[2] <= 90:
-                    print('red detected at', x, y)
-                    outputArr.append('red')
-                elif avgColor[0] <= 36 and 60 <= avgColor[1] <= 99 and 60 <= avgColor[2] <= 99:
-                    print('orange detected at', x, y)
-                    outputArr.append('orange')
-                elif 100<= avgColor[0] <= 153 and 58 <= avgColor[1] <= 99 and 60 <= avgColor[2] <= 80:
-                    print('green detected at ', x, y)
-                    outputArr.append('green')
-                elif 40<= avgColor[0] <= 80 and 55 <= avgColor[1] <= 90 and 70 <= avgColor[2] <= 100:
-                    print('yellow detected at ', x, y)
-                    outputArr.append('yellow')
-                elif avgColor[1] <= 20 and 90 <= avgColor[2]:
-                    print('white detected at ', x, y)
-                    outputArr.append('white')
-
         index += 1
 
-    print(outputArr)
-    rev = outputArr[::-1]
-    print(rev)
-    #red, orange, green, orange, yellow, green, orange, white, blue
-    #Online Color Picker w/ HSV vals: https://colorpicker.me/#a0d0bb
     return frame2;
 
 while (capture.isOpened()):
     ret, frame = capture.read()
-    img_counter = 0
+    ret2, framecopy = capture.read()
     if ret:
-        capture.set(cv2.CAP_PROP_EXPOSURE, (5)*-1)
-        newFrame = computeContours(frame);
+        capture.set(cv2.CAP_PROP_EXPOSURE, -5)
+        newFrame = findCubies(frame);
 
-        cv2.imshow("Webcam Capture", frame);
+        cv2.imshow("Webcam CaptuSre", frame);
         cv2.imshow("Adaptive Gaussian Threshold", newFrame);
+        cv2.imshow("original webcam", framecopy)
 
         k = cv2.waitKey(1)
         if k%256 == 27:
             print("Escape Hit")
             break
-        elif: k%256 == 32:
+        elif k%256 == 32:
             print("Taking Image")
             img_name = "side{}.png".format(img_counter)
-            cv2.imwrite(img_name, frame)
+            cv2.imwrite(img_name, framecopy)
             print("{} written!".format(img_name))
             img_counter+=1
     else:
@@ -144,3 +72,14 @@ while (capture.isOpened()):
 
 capture.release()
 cv2.destroyAllWindows()
+
+
+#while capture is opened
+    #find and show contours
+        #if space hit
+            #take pic and call func to detect colors
+            #return color array of 9
+            #append returned array to array 
+        #if array size 54 then return full array
+
+

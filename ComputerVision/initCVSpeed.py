@@ -3,7 +3,7 @@ import numpy as np
 capture = cv2.VideoCapture(1)
 
 def main():
-	image = cv2.imread("opencv_frame5.png")
+	image = cv2.imread("side1.png")
 	newframe = computeContours(image)
 	cv2.imshow('Init w Squares', image)
 	cv2.imshow('Final', newframe)
