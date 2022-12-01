@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 def main():
-	image = cv2.imread("opencv_frame0.png")
+	image = cv2.imread("side0.png")
 	newframe = computeContours(image)
 	cv2.imshow('Init w Squares', image)
 	cv2.imshow('Final', newframe)
@@ -10,7 +10,7 @@ def main():
 
 def initialimg():
 	#Read in image and convert it to gray, add blur
-	image = cv2.imread("opencv_frame3.png")
+	image = cv2.imread("side0.png")
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	blurred = cv2.GaussianBlur(gray, (7, 7), 0)
 
@@ -107,13 +107,13 @@ def computeContours(frame):
                 elif avgColor[0] <= 36 and 65 <= avgColor[1] <= 99 and 60 <= avgColor[2] <= 99:
                 	print('orange detected at', x, y)
                 	outputArr.append('orange')
-                elif 100<= avgColor[0] <= 150 and 65 <= avgColor[1] <= 99 and 60 <= avgColor[2] <= 75:
+                elif 100<= avgColor[0] <= 190 and 59 <= avgColor[1] <= 99 and 40 <= avgColor[2] <= 75:
                 	print('green detected at ', x, y)
                 	outputArr.append('green')
-                elif 40<= avgColor[0] <= 80 and 60 <= avgColor[1] <= 90 and 70 <= avgColor[2] <= 100:
+                elif 40<= avgColor[0] <= 80 and 30 <= avgColor[1] <= 90 and 65 <= avgColor[2] <= 100:
                 	print('yellow detected at ', x, y)
                 	outputArr.append('yellow')
-                elif avgColor[1] <= 20 and 90 <= avgColor[2]:
+                elif avgColor[1] <= 25 and 87 <= avgColor[2]:
                 	print('white detected at ', x, y)
                 	outputArr.append('white')
 

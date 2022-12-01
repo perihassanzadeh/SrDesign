@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
 
-capture = cv2.VideoCapture(0)
+capture = cv2.VideoCapture(1)
 
 def callback(num):
     return

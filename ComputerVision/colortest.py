@@ -1,42 +1,25 @@
 import cv2
 import numpy as np
-capture = cv2.VideoCapture(1)
 
-def main():
-	image = cv2.imread("side1.png")
-	newframe = computeContours(image)
-	cv2.imshow('Init w Squares', image)
-	cv2.imshow('Final', newframe)
-	cv2.waitKey()
-
-
-def computeContours(frame):
-    frame2 = frame.copy()
-    gausBlur = 13
-    gaus = 9
-    blur = cv2.bilateralFilter(cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY), gausBlur, 20, 20)
-    frame2 = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, gaus, 2)
-    canny = cv2.Canny(frame2, 87, 340)
-    cv2.imshow("Canny Edge", canny);
-    kernel = np.ones((3,3), np.uint8)
-    dilated = cv2.dilate(canny, kernel, iterations=4)
-    (contours, hierarchy) = cv2.findContours(dilated.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    outputArr = []
-    # Index used to remove nested squares.
-    index = 0
-    for cnt in contours:
-        if (hierarchy[0,index,3] != -1):
-            epsilon = (8/100)*cv2.arcLength(cnt, True)
-            approx = cv2.approxPolyDP(cnt, epsilon, True)
-            area = cv2.contourArea(approx, False)
-
-            if (len(approx) == 4 and area > 260):
-                # Square detected. Draw onto original image.
-                x,y,w,h = cv2.boundingRect(cnt)
+vid = cv2.VideoCapture(1)
+ret, frame = vid.read()
+k=cv2.waitKey(1)
+while(True):
+        cv2.circle(frame, (100,100), radius=0, color=(0,0,255), thickness=5)
+        cv2.circle(frame, (100,150), radius=0, color=(0,0,255), thickness=5)
+        cv2.circle(frame, (150,150), radius=0, color=(0,0,255), thickness=5)
+        cv2.circle(frame, (150,100), radius=0, color=(0,0,255), thickness=5)
+        cv2.imshow('LIVE', frame)
+        if k%256 == 32:
+                print("Escape Hit")
+                outputArr = []
+                x=100
+                y=100
+                w=50
+                h=50
                 avgColor = np.array(cv2.mean(frame[y:y+h, x:x+h])).astype(int)
                 #RGB Value
                 #print(avgColor)
-                cv2.drawContours(frame, [approx], 0, (0, 255, 0), 3)
 
                 #RGB to HSV
                 blue = avgColor[0]/255
@@ -84,17 +67,3 @@ def computeContours(frame):
                 elif avgColor[1] <= 20 and 90 <= avgColor[2]:
                 	print('white detected at ', x, y)
                 	outputArr.append('white')
-
-        index += 1
-
-    print(outputArr)
-    #Reverse Array
-    rev = outputArr[::-1]
-    print(rev)
-
-    #Online Color Picker w/ HSV vals: https://colorpicker.me/#a0d0bb
-    return frame2;
-
-
-if __name__ == '__main__':
-		main()

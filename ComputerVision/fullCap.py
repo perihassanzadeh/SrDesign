@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
 img_counter = 0
-capture = cv2.VideoCapture(0)
+capture = cv2.VideoCapture(1)
 
 def findCubies(frame):
     frame2 = frame.copy()
