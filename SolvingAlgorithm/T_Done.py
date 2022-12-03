@@ -3,9 +3,21 @@ from T_Cube import RubiksCube
 random.seed(1)
 
 facenames = ["U", "D", "F", "B", "L", "R"]
-affected_cubies = [[0, 1, 2, 3, 0, 1, 2, 3], [4, 7, 6, 5, 4, 5, 6, 7], [0, 9, 4, 8, 0, 3, 5, 4], [2, 10, 6, 11, 2, 1, 7, 6], [3, 11, 7, 9, 3, 2, 6, 5], [1, 8, 5, 10, 1, 0, 4, 7]]
-phase_moves = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], [0, 1, 2, 3, 4, 5, 7, 10, 12, 13, 14, 15, 16, 17], [0, 1, 2, 3, 4, 5, 7, 10, 13, 16], [1, 4, 7, 10, 13, 16]]
-
+affected_cubies = [
+					[0, 1, 2, 3, 0, 1, 2, 3], 
+					[4, 7, 6, 5, 4, 5, 6, 7], 
+					[0, 9, 4, 8, 0, 3, 5, 4], 
+					[2, 10, 6, 11, 2, 1, 7, 6], 
+					[3, 11, 7, 9, 3, 2, 6, 5], 
+					[1, 8, 5, 10, 1, 0, 4, 7]
+				   ]
+					
+phase_moves = [	
+				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+				[0, 1, 2, 3, 4, 5, 7, 10, 12, 13, 14, 15, 16, 17], 
+				[0, 1, 2, 3, 4, 5, 7, 10, 13, 16], 
+				[1, 4, 7, 10, 13, 16]
+			  ]
 def move_str(move):
 	return facenames[move/3]+{1: '', 2: '2', 3: "'"}[move%3+1]
 
@@ -19,18 +31,18 @@ class cube_state:
 			return tuple(self.state[20:32])
 		elif phase == 1:
 			result = self.state[31:40]
-			for e in range(12):
-				result[0] |= (self.state[e] / 8) << e;
+			for c in range(12):
+				result[0] |= (self.state[c] / 8) << c;
 			return tuple(result)
 		elif phase == 2:
 			result = [0,0,0]
-			for e in range(12):
-				result[0] |= (2 if (self.state[e] > 7) else (self.state[e] & 1)) << (2*e)
-			for c in range(8):
-				result[1] |= ((self.state[c+12]-12) & 5) << (3*c)
-			for i in range(12, 20):
-				for j in range(i+1, 20):
-					result[2] ^= int(self.state[i] > self.state[j])
+			for x in range(12):
+				result[0] |= (2 if (self.state[x] > 7) else (self.state[x] & 1)) << (2*x)
+			for y in range(8):
+				result[1] |= ((self.state[y+12]-12) & 5) << (3*y)
+			for z in range(12, 20):
+				for zz in range(z+1, 20):
+					result[2] ^= int(self.state[z] > self.state[zz])
 			return tuple(result)
 		else:
 			return tuple(self.state)
