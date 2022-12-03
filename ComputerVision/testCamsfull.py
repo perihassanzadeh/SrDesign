@@ -14,17 +14,17 @@ vid = cv2.VideoCapture(1)
 #vid.set()
 #State Arrays (Cube Orientation / Colors)
 fullface = []
-front = [0,0,0,0,0,0,0,0,0]
-down = [0,0,0,0,0,0,0,0,0]
-back = [0,0,0,0,0,0,0,0,0]
-up = [0,0,0,0,0,0,0,0,0]
-left = [0,0,0,0,0,0,0,0,0]
-right = [0,0,0,0,0,0,0,0,0]
+front = ['-','-','-','-','F','-','-','-','-']
+down = ['-','-','-','-','D','-','-','-','-']
+back = ['-','-','-','-','B','-','-','-','-']
+up = ['-','-','-','-','U','-','-','-','-']
+left = ['-','-','-','-','L','-','-','-','-']
+right = ['-','-','-','-','R','-','-','-','-']
 colors = []
 
 #Different Steps used to communicate with Motors
 step=0
-
+img_count = 0
 ###
 # Opens camera capture and takes images of each cube face when space bar pressed 
 # Images stored in project directory
@@ -33,7 +33,6 @@ def takeImages():
     print("Take Images of the Cube")
     print("Show Up, Right, Front, Down, Left, Back")
     #open both camera captures
-    img_count = 0
 
     while(vid.isOpened()):
         #Read the Camera Capture
@@ -53,10 +52,6 @@ def takeImages():
             cv2.imwrite(img_name, frame)
             print("{} written!".format(img_name))
             img_count+=1
-
-        #All Images have been taken
-        if img_count==1:
-            vid.release()
             return
 
 
@@ -66,19 +61,31 @@ def takeImages():
 ###
 def findFaceColors():
     print("findFaceColors")
-    frontX = [200, 300, 400, 200, 300, 400, 200, 300, 400]
-    frontY = [100, 100, 100, 200, 200, 200, 300, 300, 300]
+    frontX = [175, 230, 300, 175, 230, 300, 170, 230, 300, 370, 450, 510, 370, 450, 510, 390, 470, 525, 180, 255, 360, 280, 325, 440, 380, 400, 480]
+    frontY = [175, 120, 50, 225, 175, 110, 300, 250, 200, 40, 110, 155, 110, 175, 215, 200, 250, 300, 365, 330, 275, 400, 355, 330, 420, 400, 365]
     #Get colors from preset coordinates
-    for i in range(6):
-        frame = cv2.imread("side{}image2.png".format(i))
-        for i in range(9):
-            x=frontX[i]
-            y=frontY[i]
+    for i in range(3):
+        frame = cv2.imread("comp{}image.png".format(i))
+        for y in range(27):
+            x=frontX[y]
+            y=frontY[y]
             w=5
             h=5
             avgColor = np.array(cv2.mean(frame[y:y+h, x:x+h])).astype(int)
             color=findCubieColor(avgColor)
             fullface.append(color)
+        for z in range(9):
+            if z!=4 and i==0:
+                front[z] = fullface[0+z]
+                right[z]=fullface[9+z]
+                down[z]=fullface[18+z]
+            elif z!=4 and i==1:
+                back[z]=fullface[0+z]
+                left[z]=fullface[9+z]
+            elif z!=4 and i==2:
+                down[z]=[18+z]
+
+
 
     print(fullface)
     print(colors)
@@ -166,33 +173,27 @@ def solveSeq():
 def main():
     while True:
         print("Ready")
-
-        if step==0:
+        step = ser.readline()
+        if step==1:
             #take image
             takeImages()
             #move cube
-            firstseq = "2R 2L 2U R L’ 2U 2R 2L 2U R L’ 2D"
-            ser.write(firstseq.encode())
-            #step 2
-            step=1
-            rev=1
-        elif step==1:
-            #move cube back
-            firstseqRev = "2D' L R' 2U' 2L' 2R' 2U' L R' 2U' 2L' 2R'"
-            ser.write(firstseqRev.encode())
+            #firstTurn = "2R 2L 2U R L’ 2U 2R 2L 2U R L’ 2D"
             step=2
-        elif step ==2:
+            ser.write(step.encode())
+        elif step==3:
+            #move cube back
+            takeImages()
+            #revandTurn = "2D' L R' 2U' 2L' 2R' 2U' L R' 2U' 2L' 2R' 2R 2L 2B 2R 2L 2B 2R 2L 2B 2F"
+            ser.write(step.encode())
+            step=4
+        elif step==5:
             #take imgae
             takeImages()
-            secSeq = "2R 2L 2B 2R 2L 2B 2R 2L 2B 2F"
-            ser.write(secSeq.encode())
-            step=3
-        elif step==3:
-            #reverse
-            secSeqRev = "2F' 2B' 2L' 2R' 2B' 2L' 2R' 2B' 2L' 2R'"
-            ser.write(secSeqRev.encode())
-            step=4
-        elif step == 4:
+            #finalRevSeq = "2F' 2B' 2L' 2R' 2B' 2L' 2R' 2B' 2L' 2R'"
+            ser.write(step.encode())
+            step=6
+        elif step==7:
             #use images to detect colors
             findFaceColors()
             moves = solveSeq

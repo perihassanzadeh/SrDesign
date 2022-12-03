@@ -4,6 +4,7 @@ import numpy as np
  
 # Initiating the webcam
 vid = cv2.VideoCapture(1)
+#vid.set(cv2.CAP_PROP_EXPOSURE, -5)
 #vid2 = cv2.VideoCapture(0)
 img_counter=0
 outputArr = []

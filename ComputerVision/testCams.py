@@ -7,9 +7,10 @@ import cv2
 import numpy as np
 import kociemba
 import serial
+import time
 
 #Setup Serial Communications and video capture
-ser = serial.Serial(port = 'COM4', baudrate=9600)
+#ser = serial.Serial(port = 'COM4', baudrate=9600)
 vid = cv2.VideoCapture(1)
 #vid.set()
 #State Arrays (Cube Orientation / Colors)
@@ -156,15 +157,18 @@ def solveSeq():
 # Sends Move Seq to motors via Serial Communication with AtMega
 ###
 def main():
-	while True:
+	#while True:
+		startT = time.time()
 		print("Ready")
-		line = ser.readline()
-		#takeImages()	
+		#line = ser.readline()
+		takeImages()	
 		findFaceColors()
 		#append all faces
 		moves = solveSeq()
 		print(moves)
-		ser.write(moves.encode())
+		exectutionT = time.time()-startT
+		print("time = " + str(exectutionT))
+		#ser.write(moves.encode())
 
 
 if __name__ == '__main__':
