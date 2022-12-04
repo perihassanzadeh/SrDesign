@@ -1,61 +1,6 @@
 # Matthew Meehan
 # RubiksCube Class 
 
-import numpy
-
-def all_combos(choices):
-    """
-    Given a list of items (a,b,c,...), generates all possible combinations of
-    items where one item is taken from a, one from b, one from c, and so on.
-
-    For example, all_combos([[1, 2], ["a", "b", "c"]]) yields:
-
-        [1, "a"]
-        [1, "b"]
-        [1, "c"]
-        [2, "a"]
-        [2, "b"]
-        [2, "c"]
-    """
-    if not choices:
-        yield []
-        return
-
-    for left_choice in choices[0]:
-        for right_choices in all_combos(choices[1:]):
-            yield [left_choice] + right_choices
-            
-class Node:
-    def __init__(self, value, children=[]):
-        self.value    = value
-        self.children = children
-
-    def all_subtrees(self, max_depth):
-        yield Node(self.value)
-
-        if max_depth > 0:
-            # For each child, get all of its possible sub-trees.
-            child_subtrees = [list(self.children[i].all_subtrees(max_depth - 1)) for i in range(len(self.children))]
-
-            # Now for the n children iterate through the 2^n possibilities where
-            # each child's subtree is independently present or not present. The
-            # i-th child is present if the i-th bit in "bits" is a 1.
-            for bits in xrange(1, 2 ** len(self.children)):
-                for combos in all_combos([child_subtrees[i] for i in range(len(self.children)) if bits & (1 << i) != 0]):
-                    yield Node(self.value, combos)
-
-    def __str__(self):
-        """
-        Display the node's value, and then its children in brackets if it has any.
-        """
-        if self.children:
-            return "%s %s" % (self.value, self.children)
-        else:
-            return str(self.value)
-
-    def __repr__(self):
-        return str(self)
-		
 class RubiksCube:
 	"""
 		Initialize the Rubiks Cube with an array
@@ -65,28 +10,29 @@ class RubiksCube:
 	"""
 	def __init__(self, state):
 		self.CurrentArray = [""] * 54
-		self.sides = numpy.empty((6,9),str)
-		
+		temp = [""] * 53
+		temp[0:9] = state[0:9]
+		temp[27:36] = state[9:18]
+		temp[18:27] = state[18:27]
+		temp[45:54] = state[27:36]
+		temp[9:18] = state[36:45]
+		temp[36:45] = state[45:54]
 		if state == "":
 			self.reset()
 		else:
 			for i in range(54):
-				self.CurrentArray[i] = state[i]
-			
-			for i in range(54):
-				if state[i] == 'F':
+				if temp[i] == 'F':
 					self.CurrentArray[i] = 'r'
-				if state[i] == 'B':
+				if temp[i] == 'B':
 					self.CurrentArray[i] = 'o'
-				if state[i] == 'U':
+				if temp[i] == 'U':
 					self.CurrentArray[i] = 'y'
-				if state[i] == 'D':
+				if temp[i] == 'D':
 					self.CurrentArray[i] = 'w'
-				if state[i] == 'R':
+				if temp[i] == 'R':
 					self.CurrentArray[i] = 'g'
-				if state[i] == 'L':
+				if temp[i] == 'L':
 					self.CurrentArray[i] = 'b'
-			
 		self.update()
 				
 	def update(self):
@@ -113,25 +59,11 @@ class RubiksCube:
 		self.LFU = [self.CurrentArray[12-1],self.CurrentArray[19-1],self.CurrentArray[7-1]]
 		self.DFL = [self.CurrentArray[46-1],self.CurrentArray[25-1],self.CurrentArray[18-1]]
 		self.RBU = [self.CurrentArray[30-1],self.CurrentArray[37-1],self.CurrentArray[3-1]]
-		self.DBR = [self.CurrentArray[53-1],self.CurrentArray[43-1],self.CurrentArray[36-1]]
+		self.DBR = [self.CurrentArray[54-1],self.CurrentArray[43-1],self.CurrentArray[36-1]]
 		self.BLU = [self.CurrentArray[39-1],self.CurrentArray[10-1],self.CurrentArray[1-1]]
 		self.DLB = [self.CurrentArray[52-1],self.CurrentArray[16-1],self.CurrentArray[45-1]]
 		
 		self.corner = [self.FRU,self.RBU,self.BLU,self.LFU,self.DRF,self.DFL,self.DLB,self.DBR]
-		
-		for i in range(54):
-			if i < 9:
-				self.sides[0][i] = (self.CurrentArray[i])
-			elif i < 18:
-				self.sides[1][i-9] = (self.CurrentArray[i])
-			elif i < 27:
-				self.sides[2][i-18] = (self.CurrentArray[i])
-			elif i < 36:
-				self.sides[3][i-27] = (self.CurrentArray[i])
-			elif i < 45:
-				self.sides[4][i-36] = (self.CurrentArray[i])
-			elif i < 54:
-				self.sides[5][i-45] = (self.CurrentArray[i])
 			
 		
 	"""
@@ -181,6 +113,22 @@ class RubiksCube:
 		state = "".join(self.CurrentArray)
 		return state
 		
+	def stringify2(self):
+		state = ""
+		for i in range(54):
+			if self.CurrentArray[i] == 'w':
+				state += state.join('D')
+			if self.CurrentArray[i] == 'y':
+				state += state.join('U')
+			if self.CurrentArray[i] == 'r':
+				state += state.join('F')
+			if self.CurrentArray[i] == 'b':
+				state += state.join('L')
+			if self.CurrentArray[i] == 'g':
+				state += state.join('R')
+			if self.CurrentArray[i] == 'o':
+				state += state.join('B')
+		return state
 	"""
 		return the next step of the cube
 		
@@ -201,7 +149,6 @@ class RubiksCube:
 		temp = [""] * 54
 		for i in range(54):
 			temp[i]=self.CurrentArray[i]
-		
 		# Changing every element in the array to its 
 		# correct spots after a front face clockwise turn
 		temp[21-1] = self.CurrentArray[19-1]
@@ -209,7 +156,7 @@ class RubiksCube:
 		temp[27-1] = self.CurrentArray[21-1]
 		temp[26-1] = self.CurrentArray[24-1]
 		temp[25-1] = self.CurrentArray[27-1]
-		temp[24-1] = self.CurrentArray[26-1]
+		temp[22-1] = self.CurrentArray[26-1]
 		temp[19-1] = self.CurrentArray[25-1]
 		temp[20-1] = self.CurrentArray[22-1]
 		temp[7-1] =  self.CurrentArray[18-1]
@@ -791,7 +738,6 @@ class RubiksCube:
 			state[11 + 20] = 0
 			
 		########################
-		
 		#FU
 		if a[0] == ['g', 'y']:
 			state[0] = 1
@@ -1591,7 +1537,7 @@ class RubiksCube:
 		#RU
 		elif a[1] == ['r','b']:
 			state[1] = 9
-			state[b + 20] = 1
+			state[1 + 20] = 1
 		#BU
 		elif a[2] == ['r','b']:
 			state[2] = 9
@@ -2436,7 +2382,6 @@ class RubiksCube:
 			state[18 + 20] = 2
 			
 		#####################################
-		
 		if self.corner[7] == ['r','g','y']:
 			state[19] = 12
 			state[19 + 20] = 2
