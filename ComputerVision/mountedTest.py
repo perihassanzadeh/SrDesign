@@ -4,21 +4,15 @@ import numpy as np
  
 # Initiating the webcam
 vid = cv2.VideoCapture(1)
-#vid.set(cv2.CAP_PROP_EXPOSURE, -5)
-#vid2 = cv2.VideoCapture(0)
+#vid.set(cv2.CAP_PROP_EXPOSURE, -4)
 img_counter=0
 outputArr = []
 # Capturing frames and showing as a video
 while(True):
     ret, frame = vid.read()
     rett1, framecopy = vid.read()
-    #ret2, frame2 = vid2.read()
-    #rett2, framecopy2 = vid2.read()
-    # Getting the width and height of the feed
-    #height = int(vid.get(4))
-    #width = int(vid.get(3))
 
-    #Uncomment Corrdinates for Prep
+    #Uncomment Corrdinates for Calibration
     #Front Face Coordinates
     #Row 1
     cv2.circle(framecopy, (175,175), radius=0, color=(0,0,255), thickness=5)
@@ -61,22 +55,8 @@ while(True):
     cv2.circle(framecopy, (400,400), radius=0, color=(0,0,255), thickness=5)
     cv2.circle(framecopy, (480,365), radius=0, color=(0,0,255), thickness=5)
 
-
-    #cv2.circle(framecopy, (200,100), radius=0, color=(0,0,255), thickness=5)
-    #cv2.circle(framecopy, (300,100), radius=0, color=(0,0,255), thickness=5)
-    #cv2.circle(framecopy, (400,100), radius=0, color=(0,0,255), thickness=5)
-    # #Row 2
-    #cv2.circle(framecopy, (200,200), radius=0, color=(0,0,255), thickness=5)
-    #cv2.circle(framecopy, (300,200), radius=0, color=(0,0,255), thickness=5)
-    #cv2.circle(framecopy, (400,200), radius=0, color=(0,0,255), thickness=5)
-    # #Row 3
-    #cv2.circle(framecopy, (200,300), radius=0, color=(0,0,255), thickness=5)
-    #cv2.circle(framecopy, (300,300), radius=0, color=(0,0,255), thickness=5)
-    #cv2.circle(framecopy, (400,300), radius=0, color=(0,0,255), thickness=5)
-
     # Showing the video
     cv2.imshow('LIVE', framecopy)
-    #cv2.imshow(' ', frame2)
     # Making sure that we have a key to break the while loop
     # Which checks for the ascii value of the key pressed
     xpos=[175, 230, 300, 175, 230, 300, 170, 230, 300, 370, 450, 510, 370, 450, 510, 390, 470, 525, 180, 255, 360, 280, 325, 440, 380, 400, 480]
@@ -147,6 +127,8 @@ while(True):
                 print('white detected at ', x, y)
                 outputArr.append('white')
                 print(outputArr)
+            else:
+                outputArr.append('none')
         print(outputArr)
 
 

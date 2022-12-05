@@ -10,7 +10,7 @@ import serial
 import time
 
 #Setup Serial Communications and video capture
-#ser = serial.Serial(port = 'COM4', baudrate=9600)
+ser = serial.Serial(port = 'COM6', baudrate=9600)
 vid = cv2.VideoCapture(1)
 #vid.set()
 #State Arrays (Cube Orientation / Colors)
@@ -157,18 +157,20 @@ def solveSeq():
 # Sends Move Seq to motors via Serial Communication with AtMega
 ###
 def main():
-	#while True:
-		startT = time.time()
+	while True:
+		#startT = time.time()
 		print("Ready")
-		#line = ser.readline()
+		line = ser.readline()
+		#print(line.decode("utf-8"))
 		takeImages()	
 		findFaceColors()
 		#append all faces
 		moves = solveSeq()
-		print(moves)
-		exectutionT = time.time()-startT
-		print("time = " + str(exectutionT))
-		#ser.write(moves.encode())
+		print(moves.encode()) 
+		#exectutionT = time.time()-startT
+		#print("time = " + str(exectutionT))
+		#moves = "R U' L2"
+		ser.write(moves.encode())
 
 
 if __name__ == '__main__':

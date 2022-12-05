@@ -9,9 +9,9 @@ import kociemba
 import serial
 
 #Setup Serial Communications and video capture
-ser = serial.Serial(port = 'COM4', baudrate=9600)
+ser = serial.Serial(port = 'COM6', baudrate=9600)
 vid = cv2.VideoCapture(1)
-#vid.set()
+
 #State Arrays (Cube Orientation / Colors)
 fullface = []
 front = ['-','-','-','-','F','-','-','-','-']
@@ -22,33 +22,26 @@ left = ['-','-','-','-','L','-','-','-','-']
 right = ['-','-','-','-','R','-','-','-','-']
 colors = []
 
-#Different Steps used to communicate with Motors
-step=0
-img_count = 0
 ###
 # Opens camera capture and takes images of each cube face when space bar pressed 
 # Images stored in project directory
 ###
-def takeImages():
-    print("Take Images of the Cube")
-    print("Show Up, Right, Front, Down, Left, Back")
-    #open both camera captures
+def takeImages(img_count):
+    print("Take Image of the Cube")
 
     while(vid.isOpened()):
         #Read the Camera Capture
         ret, frame = vid.read()
         retcopy, framecopy = vid.read()
-        #Circles for Cube Orientation
-        cv2.circle(framecopy,(200,100), radius=0, color=(0,0,255), thickness=5)
-        cv2.circle(framecopy, (300,200), radius=0, color=(0,0,255), thickness=5)
-        cv2.circle(framecopy, (400,300), radius=0, color=(0,0,255), thickness=5)
-        cv2.imshow("first", framecopy)
+        
+        #Show Camera 
+        cv2.imshow("Camera", framecopy)
 
         #Setup Spacebar Press to take Image
         k=cv2.waitKey(1)
         if k%256 == 32:
-            #take two pictures from angle
-            img_name = "cornerimage{}.png".format(img_count)
+            #take picture from angle
+            img_name = "cornerim{}.png".format(img_count)
             cv2.imwrite(img_name, frame)
             print("{} written!".format(img_name))
             img_count+=1
@@ -65,7 +58,7 @@ def findFaceColors():
     frontY = [175, 120, 50, 225, 175, 110, 300, 250, 200, 40, 110, 155, 110, 175, 215, 200, 250, 300, 365, 330, 275, 400, 355, 330, 420, 400, 365]
     #Get colors from preset coordinates
     for i in range(3):
-        frame = cv2.imread("comp{}image.png".format(i))
+        frame = cv2.imread("cornerim{}.png".format(i))
         for y in range(27):
             x=frontX[y]
             y=frontY[y]
@@ -157,6 +150,7 @@ def findCubieColor(avgColor):
 ###
 def solveSeq():
     print("find findFaceColors")
+    fullface = up+right+front+down+left+back
     fullfacee=''
     for item in fullface:
         fullfacee+=item
@@ -171,33 +165,49 @@ def solveSeq():
 # Sends Move Seq to motors via Serial Communication with AtMega
 ###
 def main():
+    #Different Steps used to communicate with Motors
+    img_count = 0
+    step=0
     while True:
         print("Ready")
-        step = ser.readline()
-        if step==1:
+        line = ser.readline()
+        print(line.decode("utf-8"))
+        step = line.decode("utf-8")
+        step=step.strip()
+        if step=='1':
             #take image
-            takeImages()
-            #move cube
+            takeImages(img_count)
+            img_count+=1
+            #Turn Cube (First Sequence)
             #firstTurn = "2R 2L 2U R L’ 2U 2R 2L 2U R L’ 2D"
-            step=2
+            step='2'
             ser.write(step.encode())
-        elif step==3:
-            #move cube back
-            takeImages()
+        elif step=='3':
+            #Take Image
+            takeImages(img_count)
+            img_count+=1
+            #Reverse Cube and Turn (Second Sequence)
             #revandTurn = "2D' L R' 2U' 2L' 2R' 2U' L R' 2U' 2L' 2R' 2R 2L 2B 2R 2L 2B 2R 2L 2B 2F"
+            step='4'
             ser.write(step.encode())
-            step=4
-        elif step==5:
-            #take imgae
-            takeImages()
+        elif step=='5':
+            #take image
+            takeImages(img_count)
+            img_count+=1
+            #Reverse Second Sequence (Now at Original State)
             #finalRevSeq = "2F' 2B' 2L' 2R' 2B' 2L' 2R' 2B' 2L' 2R'"
+            step='6'
             ser.write(step.encode())
-            step=6
-        elif step==7:
+        elif step=='7':
+            #Find Colors from Images
             #use images to detect colors
-            findFaceColors()
-            moves = solveSeq
-            print(moves)
+            #findFaceColors()
+            #Solve from State Sequence 
+            #moves = solveSeq()
+            #print(moves)
+            moves = "2D L R'"
+            ser.write(moves.encode())
+            print("done")
 
 
 if __name__ == '__main__':
