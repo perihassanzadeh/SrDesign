@@ -50,7 +50,7 @@ while (capture.isOpened()):
     ret, frame = capture.read()
     ret2, framecopy = capture.read()
     if ret:
-        capture.set(cv2.CAP_PROP_EXPOSURE, -5)
+        capture.set(cv2.CAP_PROP_EXPOSURE, -6)
         newFrame = findCubies(frame);
 
         cv2.imshow("Webcam CaptuSre", frame);
@@ -63,7 +63,7 @@ while (capture.isOpened()):
             break
         elif k%256 == 32:
             print("Taking Image")
-            img_name = "side{}.png".format(img_counter)
+            img_name = "sideDynamV2{}.png".format(img_counter)
             cv2.imwrite(img_name, framecopy)
             print("{} written!".format(img_name))
             img_counter+=1

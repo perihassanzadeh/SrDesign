@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 def main():
-	image = cv2.imread("side0.png")
+	image = cv2.imread("dynamTest27.png")
 	newframe = computeContours(image)
 	cv2.imshow('Init w Squares', image)
 	cv2.imshow('Final', newframe)
@@ -10,7 +10,7 @@ def main():
 
 def initialimg():
 	#Read in image and convert it to gray, add blur
-	image = cv2.imread("side0.png")
+	image = cv2.imread("sideDynamV24.png")
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	blurred = cv2.GaussianBlur(gray, (7, 7), 0)
 
@@ -20,7 +20,7 @@ def initialimg():
 
 	#Dilate image to open up
 	kernel = np.ones((3,3), np.uint8)
-	dilated = cv2.dilate(canny, kernel, iterations=2)
+	dilated = cv2.dilate(canny, kernel, iterations=4)
 
 	#Draw contours on image based on continuous average colors
 	(contours, hierarchy) = cv2.findContours(dilated.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -116,6 +116,8 @@ def computeContours(frame):
                 elif avgColor[1] <= 25 and 87 <= avgColor[2]:
                 	print('white detected at ', x, y)
                 	outputArr.append('white')
+                else:
+                    outputArr.append("none")
 
         index += 1
 
