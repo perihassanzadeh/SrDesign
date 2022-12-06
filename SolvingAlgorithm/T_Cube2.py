@@ -1,22 +1,30 @@
 # Matthew Meehan
 # RubiksCube Class 
-
-class RubiksCube:
+import time
+from rubik_solver import utils
+class RubiksCube2:
 	"""
 		Initialize the Rubiks Cube with an array
 		
 		Input - Array size 54
 		Output - None
 	"""
-	def __init__(self, state):
+	def __init__(self, input_state):
 		self.CurrentArray = [""] * 54
-		temp = [""] * 53
+		state = [""] * 54
+		for i in range(54):
+			state[i] = input_state[i]
+		
+			
+		temp = [""] * 54
+		
 		temp[0:9] = state[0:9]
 		temp[27:36] = state[9:18]
 		temp[18:27] = state[18:27]
 		temp[45:54] = state[27:36]
 		temp[9:18] = state[36:45]
 		temp[36:45] = state[45:54]
+		
 		if state == "":
 			self.reset()
 		else:
@@ -33,7 +41,9 @@ class RubiksCube:
 					self.CurrentArray[i] = 'g'
 				if temp[i] == 'L':
 					self.CurrentArray[i] = 'b'
+		print(self.CurrentArray)
 		self.update()
+		self.nextstep = 0
 				
 	def update(self):
 		# Set up so that FU is an array of two faces
@@ -55,15 +65,15 @@ class RubiksCube:
 		self.edges = [self.FU,self.RU,self.BU,self.LU,self.FD,self.RD,self.BD,self.LD,self.FR,self.FL,self.BR,self.BL]
 		
 		self.FRU = [self.CurrentArray[21-1],self.CurrentArray[28-1],self.CurrentArray[9-1]]
-		self.DRF = [self.CurrentArray[48-1],self.CurrentArray[34-1],self.CurrentArray[27-1]]
-		self.LFU = [self.CurrentArray[12-1],self.CurrentArray[19-1],self.CurrentArray[7-1]]
-		self.DFL = [self.CurrentArray[46-1],self.CurrentArray[25-1],self.CurrentArray[18-1]]
-		self.RBU = [self.CurrentArray[30-1],self.CurrentArray[37-1],self.CurrentArray[3-1]]
-		self.DBR = [self.CurrentArray[54-1],self.CurrentArray[43-1],self.CurrentArray[36-1]]
+		self.FRD = [self.CurrentArray[27-1],self.CurrentArray[34-1],self.CurrentArray[48-1]]
+		self.FLU = [self.CurrentArray[19-1],self.CurrentArray[12-1],self.CurrentArray[7-1]]
+		self.FLD = [self.CurrentArray[25-1],self.CurrentArray[18-1],self.CurrentArray[46-1]]
+		self.BRU = [self.CurrentArray[37-1],self.CurrentArray[30-1],self.CurrentArray[3-1]]
+		self.BRD = [self.CurrentArray[43-1],self.CurrentArray[36-1],self.CurrentArray[54-1]]
 		self.BLU = [self.CurrentArray[39-1],self.CurrentArray[10-1],self.CurrentArray[1-1]]
-		self.DLB = [self.CurrentArray[52-1],self.CurrentArray[16-1],self.CurrentArray[45-1]]
+		self.BLD = [self.CurrentArray[45-1],self.CurrentArray[16-1],self.CurrentArray[52-1]]
 		
-		self.corner = [self.FRU,self.RBU,self.BLU,self.LFU,self.DRF,self.DFL,self.DLB,self.DBR]
+		self.corner = [self.FRU,self.BRU,self.BLU,self.FLU,self.FRD,self.FLD,self.BLD,self.BRD]
 			
 		
 	"""
@@ -88,7 +98,8 @@ class RubiksCube:
 			elif i < 54:
 				temp[i] = "w"
 		self.CurrentArray = temp
-				
+		self.nextstep = 0
+		
 	"""
 		Determines if the cube is solved or not
 		
@@ -129,13 +140,15 @@ class RubiksCube:
 			if self.CurrentArray[i] == 'o':
 				state += state.join('B')
 		return state
+		
 	"""
 		return the next step of the cube
 		
 		Input - none
 		Output - Integer
 	"""
-	def nextstep():
+	def next_step(self):
+		self.nextstep += 1
 		return self.nextstep
 		
 	"""
@@ -354,7 +367,7 @@ class RubiksCube:
 		temp[21-1] = self.CurrentArray[27-1]
 		temp[24-1] = self.CurrentArray[26-1]
 		temp[27-1] = self.CurrentArray[25-1]
-		temp[26-1] = self.CurrentArray[24-1]
+		temp[26-1] = self.CurrentArray[22-1]
 		temp[25-1] = self.CurrentArray[19-1]
 		temp[22-1] = self.CurrentArray[20-1]
 		temp[18-1] = self.CurrentArray[7-1]
@@ -575,7 +588,6 @@ class RubiksCube:
 				return 0
 				
 			return self.traverse(cube_str,depth + 1,target,i)
-						
 	def get_orientataion(self):
 		state = [0] * 40
 		
@@ -2457,10 +2469,310 @@ class RubiksCube:
 		
 		return state
 
-def main():
-	cube = RubiksCube("")
-	cube.CW_Front()
-	print(cube.stringify())
+def CFOP(moves):
+	orientation = ["U","L","F","R","B","D"]
+	move_sequence = ""
+	for a in moves:
+		if str(a) == "Y":
+			temp = orientation
+			temp2 = orientation[4]
+			temp[4] = orientation[1]
+			temp[1] = orientation[2]
+			temp[2] = orientation[3]
+			temp[3] = temp2
+			orientation = temp
+		elif str(a) == "Y'":
+			temp = orientation
+			temp2 = orientation[1]
+			temp[1] = orientation[4]
+			temp[4] = orientation[3]
+			temp[3] = orientation[2]
+			temp[2] = temp2
+			orientation = temp
+		
+		elif str(a) == "X":
+			temp = orientation
+			temp2 = orientation[0]
+			temp[0] = orientation[2]
+			temp[2] = orientation[5]
+			temp[5] = orientation[4]
+			temp[4] = temp2
+			orientation = temp
+		
+		elif str(a) == "X'":
+			temp = orientation
+			temp2 = orientation[2]
+			temp[2] = orientation[0]
+			temp[0] = orientation[4]
+			temp[4] = orientation[5]
+			temp[5] = temp2
+			orientation = temp
+	
+		elif str(a) == "Z":
+			temp = orientation
+			temp2 = orientation[0]
+			temp[0] = orientation[1]
+			temp[1] = orientation[5]
+			temp[5] = orientation[3]
+			temp[3] = temp2
+			orientation = temp
+		
+		elif str(a) == "Z'":
+			temp = orientation
+			temp2 = orientation[1]
+			temp[1] = orientation[0]
+			temp[0] = orientation[3]
+			temp[3] = orientation[5]
+			temp[5] = temp2
+			orientation = temp
+		
+		elif str(a) == "M":
+			temp = orientation
+			temp2 = orientation[2]
+			temp[2] = orientation[0]
+			temp[0] = orientation[4]
+			temp[4] = orientation[5]
+			temp[5] = temp2
+			orientation = temp
+			move_sequence += str(orientation[1]) + " " + str(orientation[3]) + "' "
+		
+		elif str(a) == "M'":
+			temp = orientation
+			temp2 = orientation[0]
+			temp[0] = orientation[2]
+			temp[2] = orientation[5]
+			temp[5] = orientation[4]
+			temp[4] = temp2
+			orientation = temp
+			move_sequence += str(orientation[1]) + "' " + str(orientation[3]) + " "
+			
+		elif str(a) == "M2":
+			temp = orientation
+			temp2 = orientation[5]
+			temp[5] = orientation[0]
+			temp[0] = temp2
+			temp3 = orientation[4]
+			temp[4] = orientation[2]
+			temp[2] = temp3
+			orientation = temp
+			move_sequence += str(orientation[1]) + "2 " + str(orientation[3]) + "2 "
+		
+		elif str(a) == "E":
+			temp = orientation
+			temp2 = orientation[1]
+			temp[1] = orientation[4]
+			temp[4] = orientation[3]
+			temp[3] = orientation[2]
+			temp[2] = temp2
+			orientation = temp
+			move_sequence += str(orientation[0]) + " " + str(orientation[5]) + "' "
+			
+		elif str(a) == "E'":
+			temp = orientation
+			temp2 = orientation[4]
+			temp[4] = orientation[1]
+			temp[1] = orientation[2]
+			temp[2] = orientation[3]
+			temp[3] = temp2
+			orientation = temp
+			move_sequence += str(orientation[0]) + "' " + str(orientation[5]) + " "
+			
+		elif str(a) == "E2":
+			temp = orientation
+			temp2 = orientation[1]
+			temp[1] = orientation[3]
+			temp[3] = temp2
+			temp3 = orientation[4]
+			temp[4] = orientation[2]
+			temp[2] = temp3
+			orientation = temp
+			move_sequence += str(orientation[0]) + "2 " + str(orientation[5]) + "2 "
+		
+		elif str(a) == "S":
+			temp = orientation
+			temp2 = orientation[0]
+			temp[0] = orientation[1]
+			temp[1] = orientation[5]
+			temp[5] = orientation[3]
+			temp[3] = temp2
+			orientation = temp
+			move_sequence += str(orientation[4]) + " " + str(orientation[2]) + "' "
+		elif str(a) == "S'":
+			temp = orientation
+			temp2 = orientation[1]
+			temp[1] = orientation[0]
+			temp[0] = orientation[3]
+			temp[3] = orientation[5]
+			temp[5] = temp2
+			orientation = temp
+			move_sequence += str(orientation[4]) + "' " + str(orientation[2]) + " "
+		elif str(a) == "S2":
+			temp = orientation
+			temp2 = orientation[0]
+			temp[0] = orientation[5]
+			temp[5] = temp2
+			temp3 = orientation[1]
+			temp[1] = orientation[3]
+			temp[3] = temp3
+			orientation = temp
+			move_sequence += str(orientation[4]) + "2 " + str(orientation[2]) + "2 "
+			
+		if str(a) == "U":
+			move_sequence += str(orientation[0]) + " "
+			
+		if str(a) == "U'":
+			move_sequence += str(orientation[0]) + "' "
+			
+		if str(a) == "U2":
+			move_sequence += str(orientation[0]) + "2 "
+			
+		if str(a) == "L":
+			move_sequence += str(orientation[1]) + " "
+			
+		if str(a) == "L'":
+			move_sequence += str(orientation[1]) + "' "
+			
+		if str(a) == "L2":
+			move_sequence += str(orientation[1]) + "2 "
+			
+		if str(a) == "F":
+			move_sequence += str(orientation[2]) + " "
+			
+		if str(a) == "F'":
+			move_sequence += str(orientation[2]) + "' "
+			
+		if str(a) == "F2":
+			move_sequence += str(orientation[2]) + "2 "
+			
+		if str(a) == "R":
+			move_sequence += str(orientation[3]) + " "
+			
+		if str(a) == "R'":
+			move_sequence += str(orientation[3]) + "' "
+			
+		if str(a) == "R2":
+			move_sequence += str(orientation[3]) + "2 "
+			
+		if str(a) == "B":
+			move_sequence += str(orientation[4]) + " "
+			
+		if str(a) == "B'":
+			move_sequence += str(orientation[4]) + "' "
+			
+		if str(a) == "B2":
+			move_sequence += str(orientation[4]) + "2 "
+			
+		if str(a) == "D":
+			move_sequence += str(orientation[5]) + " "
+			
+		if str(a) == "D'":
+			move_sequence += str(orientation[5]) + "' "
+			
+		if str(a) == "D2":
+			move_sequence += str(orientation[5]) + "2 "
+		
+	return move_sequence
+					
 
-if __name__ == '__main__':
-	main()
+def solve_CFOP(state):
+	cube = RubiksCube2(state)
+	print("\nFull Color State: " + state)
+	
+	start_time = time.time()
+	moves = utils.solve(cube.stringify(), 'CFOP')
+	print("\n--- %s seconds ---" % (time.time() - start_time))
+	
+	move_seq = CFOP(moves)
+	print("\nFull Solve Sequence: " + move_seq)
+	print("\n")
+	
+	new_move_seq = ""
+	move_seq_array = [""]
+	temp = ""
+	for i in range(len(move_seq)):
+		if move_seq[i] != " ":
+			temp += move_seq[i]
+			
+		if move_seq[i] == " ":
+				move_seq_array.append(temp)
+				temp = ""
+				
+		for i in range(len(move_seq_array)):
+			if move_seq_array[i] == "F2" and move_seq_array[i-1] == "F2":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "B2" and move_seq_array[i-1] == "B2":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "U2" and move_seq_array[i-1] == "U2":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "D2" and move_seq_array[i-1] == "D2":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "L2" and move_seq_array[i-1] == "L2":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "R2" and move_seq_array[i-1] == "R2":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "F" and move_seq_array[i-1] == "F'":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "F'" and move_seq_array[i-1] == "F":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "B" and move_seq_array[i-1] == "B'":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "B'" and move_seq_array[i-1] == "B":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "U" and move_seq_array[i-1] == "U'":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "U'" and move_seq_array[i-1] == "U":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "D" and move_seq_array[i-1] == "D'":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "D'" and move_seq_array[i-1] == "D":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "L" and move_seq_array[i-1] == "L'":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "L'" and move_seq_array[i-1] == "L":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "R" and move_seq_array[i-1] == "R'":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+			if move_seq_array[i] == "R'" and move_seq_array[i-1] == "R":
+				move_seq_array.remove(move_seq_array[i])
+				move_seq_array.remove(move_seq_array[i-1])
+				break
+	
+	for i in range(len(move_seq_array)):
+		new_move_seq = new_move_seq.join(move_seq_array[i])
+
+	return new_move_seq
+
