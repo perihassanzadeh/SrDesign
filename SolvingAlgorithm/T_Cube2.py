@@ -2774,5 +2774,5 @@ def solve_CFOP(state):
 	for i in range(len(move_seq_array)):
 		new_move_seq = new_move_seq.join(move_seq_array[i])
 
-	return new_move_seq
+	return move_seq
 

@@ -1,8 +1,9 @@
 from T_Done import solve_cube
+from T_Cube2 import solve_CFOP
 
 def main():
 	state = 'UUDUUUDDUFFFRRLBFBFBLFFFFRRUUDDDDDDULLRRLLLLRLBBBBBRRB'
-	seq = solve_cube(state)
+	seq = solve_CFOP(state)
 	print(seq)
 
 
