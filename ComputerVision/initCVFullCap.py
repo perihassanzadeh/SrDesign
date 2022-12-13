@@ -3,37 +3,16 @@ import numpy as np
 from operator import itemgetter
 
 def main():
-    image = cv2.imread("sideDynamV22.png")
+    image = cv2.imread("sideDynamV26.png")
     newframe = computeContours(image)
     cv2.imshow('Init w Squares', image)
     cv2.imshow('Final', newframe)
     cv2.waitKey()
 
-def initialimg():
-    #Read in image and convert it to gray, add blur
-    image = cv2.imread("sideDynamV20.png")
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (7, 7), 0)
-
-    cv2.imshow('blur', blurred)
-
-    canny = cv2.Canny(blurred, 20, 40)
-
-    #Dilate image to open up
-    kernel = np.ones((3,3), np.uint8)
-    dilated = cv2.dilate(canny, kernel, iterations=4)
-
-    #Draw contours on image based on continuous average colors
-    (contours, hierarchy) = cv2.findContours(dilated.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    cv2.drawContours(image, contours, -1, (0,255,0), 3)
-
-    #Show image to user
-    cv2.imshow('canny', image)
-    cv2.waitKey()
 
 def sortColors(rev):
     finalarray = []
-    if len(rev)!=9:
+    if len(rev)!=int(9):
         print("Not all 9 cubes detected")
         return finalarray
     else:
@@ -61,20 +40,20 @@ def sortColors(rev):
 def computeContours(frame):
     frame2 = frame.copy()
     #frame2 = cv2.imread("opencv_frame3.png")
-    gausBlur = 11
+    gausBlur = 13
     
-    gaus = 7
+    gaus = 21
 
-    blur = cv2.bilateralFilter(cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY), gausBlur, 15, 15)
+    blur = cv2.bilateralFilter(cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY), gausBlur, 20, 20)
 
     frame2 = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, gaus, 2)
 
-    canny = cv2.Canny(frame2, 88, 347)
+    canny = cv2.Canny(frame2, 87, 340)
 
     cv2.imshow("Canny Edge", canny);
 
     kernel = np.ones((3,3), np.uint8)
-    dilated = cv2.dilate(canny, kernel, iterations=3)
+    dilated = cv2.dilate(canny, kernel, iterations=10)
 
     (contours, hierarchy) = cv2.findContours(dilated.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     outputArr = []
@@ -83,12 +62,12 @@ def computeContours(frame):
     #print(len(contours))
     for cnt in contours:
         if (hierarchy[0,index,3] != -1):
-            epsilon = (15/100)*cv2.arcLength(cnt, True)
+            epsilon = (8/100)*cv2.arcLength(cnt, True)
             approx = cv2.approxPolyDP(cnt, epsilon, True)
 
             area = cv2.contourArea(approx, False)
 
-            if (len(approx) == 4 and area > 264):
+            if (len(approx) == 4 and area > 260):
                 # Square detected. Draw onto original image.
                 x,y,w,h = cv2.boundingRect(cnt)
                 #print(x, y)
@@ -133,15 +112,15 @@ def computeContours(frame):
                     print('red detected at', x, y)
                     temp = [x, y, 'red']
                     outputArr.append(temp)
-                elif avgColor[0] <= 36 and 65 <= avgColor[1] <= 99 and 60 <= avgColor[2] <= 99:
+                elif avgColor[0] <= 36 and 65 <= avgColor[1] <= 100 and 44 <= avgColor[2] <= 100:
                     print('orange detected at', x, y)
                     temp = [x, y, 'orange']
                     outputArr.append(temp)
-                elif 100<= avgColor[0] <= 190 and 59 <= avgColor[1] <= 99 and 40 <= avgColor[2] <= 75:
+                elif 100<= avgColor[0] <= 190 and 43 <= avgColor[1] <= 99 and 40 <= avgColor[2] <= 83:
                     print('green detected at ', x, y)
                     temp = [x, y, 'green']
                     outputArr.append(temp)
-                elif 40<= avgColor[0] <= 80 and 30 <= avgColor[1] <= 99 and 65 <= avgColor[2] <= 100:
+                elif 40<= avgColor[0] <= 80 and 30 <= avgColor[1] <= 100 and 65 <= avgColor[2] <= 100:
                     print('yellow detected at ', x, y)
                     temp = [x, y, 'yellow']
                     outputArr.append(temp)
@@ -150,7 +129,8 @@ def computeContours(frame):
                     temp = [x, y, 'white']
                     outputArr.append(temp)
                 else:
-                    outputArr.append("none")
+                    temp = [0,0,'none']
+                    outputArr.append(temp)
 
         index += 1
 

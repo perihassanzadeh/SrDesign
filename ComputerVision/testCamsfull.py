@@ -20,6 +20,9 @@ back = ['-','-','-','-','B','-','-','-','-']
 up = ['-','-','-','-','U','-','-','-','-']
 left = ['-','-','-','-','L','-','-','-','-']
 right = ['-','-','-','-','R','-','-','-','-']
+firstpic = []
+secondpic=[]
+thirdpic=[]
 colors = []
 
 ###
@@ -54,8 +57,8 @@ def takeImages(img_count):
 ###
 def findFaceColors():
     print("findFaceColors")
-    frontX = [175, 230, 300, 175, 230, 300, 170, 230, 300, 370, 450, 510, 370, 450, 510, 390, 470, 525, 180, 255, 360, 280, 325, 440, 380, 400, 480]
-    frontY = [175, 120, 50, 225, 175, 110, 300, 250, 200, 40, 110, 155, 110, 175, 215, 200, 250, 300, 365, 330, 275, 400, 355, 330, 420, 400, 365]
+    frontX = [183, 235, 300, 180, 230, 300, 170, 230, 300, 370, 450, 515, 370, 450, 525, 390, 470, 535, 185, 255, 360, 280, 325, 440, 383, 415, 500]
+    frontY = [182, 120, 50, 235, 175, 115, 310, 255, 200, 43, 105, 155, 110, 175, 215, 200, 250, 295, 375, 335, 275, 410, 365, 330, 430, 405, 365]
     #Get colors from preset coordinates
     for i in range(3):
         frame = cv2.imread("cornerim{}.png".format(i))
@@ -66,17 +69,25 @@ def findFaceColors():
             h=5
             avgColor = np.array(cv2.mean(frame[y:y+h, x:x+h])).astype(int)
             color=findCubieColor(avgColor)
-            fullface.append(color)
-        for z in range(9):
-            if z!=4 and i==0:
-                front[z] = fullface[0+z]
-                right[z]=fullface[9+z]
-                down[z]=fullface[18+z]
-            elif z!=4 and i==1:
-                back[z]=fullface[0+z]
-                left[z]=fullface[9+z]
-            elif z!=4 and i==2:
-                down[z]=[18+z]
+            if i==0:
+                firstpic.append(color)
+            elif i==1:
+                secondpic.append(color)
+            elif i==2:
+                thirdpic.append(color)
+            else:
+                print("out of range")
+            #fullface.append(color)
+        #for z in range(9):
+            #if z!=4 and i==0:
+                #front[z] = fullface[0+z]
+                #right[z]=fullface[9+z]
+                #down[z]=fullface[18+z]
+            #elif z!=4 and i==1:
+                #back[z]=fullface[0+z]
+                #left[z]=fullface[9+z]
+            #elif z!=4 and i==2:
+                #down[z]=[18+z]
 
 
 

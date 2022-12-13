@@ -4,7 +4,7 @@ from operator import itemgetter
 capture = cv2.VideoCapture(1)
 
 def main():
-    image = cv2.imread("dynamTest29.png")
+    image = cv2.imread("side0image2.png")
     newframe = computeContours(image)
     cv2.imshow('Init w Squares', image)
     cv2.imshow('Final', newframe)
@@ -102,20 +102,20 @@ def computeContours(frame):
     rev = outputArr[::-1]
     print(rev)
 
-    top = rev[0]+rev[1]+rev[2]
-    mid = rev[3]+rev[4]
-    bot = rev[5]+rev[6]+rev[7]
+    #top = rev[0]+rev[1]+rev[2]
+    #mid = rev[3]+rev[4]
+    #bot = rev[5]+rev[6]+rev[7]
 
-    print(top)
-    print(mid)
-    print(bot)
+    #print(top)
+    #print(mid)
+    #print(bot)
 
-    topfinal = sorted(top, key=itemgetter(0))
-    midfinal = sorted(mid, key=itemgetter(0))
-    botfinal=sorted(bot, key=itemgetter(0))
+    #topfinal = sorted(top, key=itemgetter(0))
+    #midfinal = sorted(mid, key=itemgetter(0))
+    #botfinal=sorted(bot, key=itemgetter(0))
 
-    finalll=topfinal[0][3]+topfinal[1][3]+topfinal[2][3]+midfinal[0][3]+midfinal[1][3]+botfinal[0][3]+botfinal[1][3]+botfinal[2][3]
-    print(finalll)
+    #finalll=topfinal[0][3]+topfinal[1][3]+topfinal[2][3]+midfinal[0][3]+midfinal[1][3]+botfinal[0][3]+botfinal[1][3]+botfinal[2][3]
+    #print(finalll)
     #Online Color Picker w/ HSV vals: https://colorpicker.me/#a0d0bb
     return frame2;
 
