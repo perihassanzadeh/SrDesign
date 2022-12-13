@@ -12,11 +12,12 @@ class RubiksCube2:
 	def __init__(self, input_state):
 		self.CurrentArray = [""] * 54
 		state = [""] * 54
+		temp = [""] * 54
+		"""
 		for i in range(54):
 			state[i] = input_state[i]
 		
-			
-		temp = [""] * 54
+		temp = state
 		
 		temp[0:9] = state[0:9]
 		temp[27:36] = state[9:18]
@@ -24,10 +25,18 @@ class RubiksCube2:
 		temp[45:54] = state[27:36]
 		temp[9:18] = state[36:45]
 		temp[36:45] = state[45:54]
+		print(temp)
+		"""
 		
-		if state == "":
+		if input_state == "":
 			self.reset()
 		else:
+			for i in range(54):
+				temp[i] = input_state[i]
+				
+			for i in range(54):
+				state[i] = input_state[i]
+			
 			for i in range(54):
 				if temp[i] == 'F':
 					self.CurrentArray[i] = 'r'
@@ -41,7 +50,6 @@ class RubiksCube2:
 					self.CurrentArray[i] = 'g'
 				if temp[i] == 'L':
 					self.CurrentArray[i] = 'b'
-		print(self.CurrentArray)
 		self.update()
 		self.nextstep = 0
 				
@@ -2676,103 +2684,466 @@ def CFOP(moves):
 
 def solve_CFOP(state):
 	cube = RubiksCube2(state)
-	print("\nFull Color State: " + state)
+	#print("\nFull Color State: " + state)
 	
 	start_time = time.time()
 	moves = utils.solve(cube.stringify(), 'CFOP')
-	print("\n--- %s seconds ---" % (time.time() - start_time))
+	#print("\n--- %s seconds ---" % (time.time() - start_time))
 	
 	move_seq = CFOP(moves)
-	print("\nFull Solve Sequence: " + move_seq)
-	print("\n")
 	
 	new_move_seq = ""
-	move_seq_array = [""]
+	move_seq_array = []
 	temp = ""
+	
 	for i in range(len(move_seq)):
 		if move_seq[i] != " ":
+			"""
+			if move_seq[i] == "'":
+				temp+= "p"
+			else:
+			"""
 			temp += move_seq[i]
 			
 		if move_seq[i] == " ":
-				move_seq_array.append(temp)
-				temp = ""
-				
-		for i in range(len(move_seq_array)):
-			if move_seq_array[i] == "F2" and move_seq_array[i-1] == "F2":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "B2" and move_seq_array[i-1] == "B2":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "U2" and move_seq_array[i-1] == "U2":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "D2" and move_seq_array[i-1] == "D2":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "L2" and move_seq_array[i-1] == "L2":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "R2" and move_seq_array[i-1] == "R2":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "F" and move_seq_array[i-1] == "F'":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "F'" and move_seq_array[i-1] == "F":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "B" and move_seq_array[i-1] == "B'":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "B'" and move_seq_array[i-1] == "B":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "U" and move_seq_array[i-1] == "U'":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "U'" and move_seq_array[i-1] == "U":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "D" and move_seq_array[i-1] == "D'":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "D'" and move_seq_array[i-1] == "D":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "L" and move_seq_array[i-1] == "L'":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "L'" and move_seq_array[i-1] == "L":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "R" and move_seq_array[i-1] == "R'":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
-			if move_seq_array[i] == "R'" and move_seq_array[i-1] == "R":
-				move_seq_array.remove(move_seq_array[i])
-				move_seq_array.remove(move_seq_array[i-1])
-				break
+			move_seq_array.append(temp)
+			temp = ""
+			
+	
+	F0 = ["F","F'"]
+	F01 = ["F'","F"]
+	F02 = ["F","F"]
+	F03 = ["F'","F'"]
+	F1 = ["F2","F"]
+	F11 = ["F","F2"]
+	F2 = ["F2","F'"]
+	F21 = ["F'","F2"]
+	F3 = ["F","F","F"]
+	F4 = ["F'","F'","F'"]
+	F5 = ["F","F","F","F"]
+	F6 = ["F'","F'","F'","F'"]
+	
+	U0 = ["U","U'"]
+	U01 = ["U'","U"]
+	U02 = ["U","U"]
+	U03 = ["U'","U'"]
+	U1 = ["U2","U"]
+	U11 = ["U","U2"]
+	U2 = ["U2","U'"]
+	U21 = ["U'","U2"]
+	U3 = ["U","U","U"]
+	U4 = ["U'","U'","U'"]
+	U5 = ["U","U","U","U"]
+	U6 = ["U'","U'","U'","U'"]
+	
+	B0 = ["B","B'"]
+	B01 = ["B'","B"]
+	B02 = ["B","B"]
+	B03 = ["B'","B'"]
+	B1 = ["B2","B"]
+	B11 = ["B","B2"]
+	B2 = ["B2","B'"]
+	B21 = ["B'","B2"]
+	B3 = ["B","B","B"]
+	B4 = ["B'","B'","B'"]
+	B5 = ["B","B","B","B"]
+	B6 = ["B'","B'","B'","B'"]
+	
+	D0 = ["D","D'"]
+	D01 = ["D'","D"]
+	D02 = ["D","D"]
+	D03 = ["D'","D'"]
+	D1 = ["D2","D"]
+	D11 = ["D","D2"]
+	D2 = ["D2","D'"]
+	D21 = ["D'","D2"]
+	D3 = ["D","D","D"]
+	D4 = ["D'","D'","D'"]
+	D5 = ["D","D","D","D"]
+	D6 = ["D'","D'","D'","D'"]
+	
+	R0 = ["R","R'"] 
+	R01 = ["R'","R"] 
+	R02 = ["R","R"] 
+	R03 = ["R'","R'"] 
+	R1 = ["R2","R"]
+	R11 = ["R","R2"]
+	R2 = ["R2","R'"]
+	R21 = ["R'","R2"]
+	R3 = ["R","R","R"]
+	R4 = ["R'","R'","R'"]
+	R5 = ["R","R","R","R"]
+	R6 = ["R'","R'","R'","R'"]
+	
+	L0 = ["L","L'"]
+	L01 = ["L'","L"]
+	L02 = ["L","L"]
+	L03 = ["L'","L'"]
+	L1 = ["L2","L"]
+	L11 = ["L","L2"]
+	L2 = ["L2","L'"]
+	L21 = ["L'","L2"]
+	L3 = ["L","L","L"]
+	L4 = ["L'","L'","L'"]
+	L5 = ["L","L","L","L"]
+	L6 = ["L'","L'","L'","L'"]
 	
 	for i in range(len(move_seq_array)):
-		new_move_seq = new_move_seq.join(move_seq_array[i])
+		if i > 3:
+			four  	 = str(move_seq_array[i]) 
+			three   = str(move_seq_array[i-1])
+			two 	= str(move_seq_array[i-2])
+			one  	= str(move_seq_array[i-3])
+			#print(one + " " + two + " " +  three + " " + four )
 
-	return move_seq
+			if [one,two,three,four] == F5:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				move_seq_array[i-3] = ""
+				
+			if [one,two,three,four] == F6:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				move_seq_array[i-3] = ""
+				
+			if [one,two,three,four] == U5:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				move_seq_array[i-3] = ""
+				
+			if [one,two,three,four] == U6:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				move_seq_array[i-3] = ""
+				
+			if [one,two,three,four] == B5:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				move_seq_array[i-3] = ""
+				
+			if [one,two,three,four] == B6:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				move_seq_array[i-3] = ""
+				
+			if [one,two,three,four] == D5:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				move_seq_array[i-3] = ""
+				
+			if [one,two,three,four] == D6:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				move_seq_array[i-3] = ""
+				
+			if [one,two,three,four] == L5:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				move_seq_array[i-3] = ""
+				
+			if [one,two,three,four] == L6:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				move_seq_array[i-3] = ""
+				
+			if [one,two,three,four] == R5:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				move_seq_array[i-3] = ""
+				
+			if [one,two,three,four] == R6:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				move_seq_array[i-3] = ""
+				
+		if i > 2:
+			three   = str(move_seq_array[i]) 
+			two   = str(move_seq_array[i-1])
+			one = str(move_seq_array[i-2])
+			#print(one + " " + two + " " +  three)
+			
+			if [one,two,three] == F4:
+				move_seq_array[i] = "F"
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				
+			if [one,two,three] == F3:
+				move_seq_array[i] = "F'"
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				
+			if [one,two,three] == U4:
+				move_seq_array[i] = "U"
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				print("U3")
+				
+			if [one,two,three] == U3:
+				move_seq_array[i] = "U'"
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				print("U4")
+			
+			if [one,two,three] == B4:
+				move_seq_array[i] = "B"
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				
+			if [one,two,three] == B3:
+				move_seq_array[i] = "B'"
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+			
+			if [one,two,three] == D4:
+				move_seq_array[i] = "D"
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				
+			if [one,two,three] == D3:
+				move_seq_array[i] = "D'"
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+			
+			if [one,two,three] == R4:
+				move_seq_array[i] = "R"
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				
+			if [one,two,three] == R3:
+				move_seq_array[i] = "R'"
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+			
+			if [one,two,three] == L4:
+				move_seq_array[i] = "L"
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+				
+			if [one,two,three] == L3:
+				move_seq_array[i] = "L'"
+				move_seq_array[i-1] = ""
+				move_seq_array[i-2] = ""
+			
+			
+		if i > 1:
+			two   = str(move_seq_array[i]) 
+			one   = str(move_seq_array[i-1])
+			
+			if [one,two] == F0:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == F01:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == F02:
+				move_seq_array[i] = "F2"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == F03:
+				move_seq_array[i] = "F2"
+				move_seq_array[i-1] = ""
+			
+			if [one,two] == F1:
+				move_seq_array[i] = "F'"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == F11:
+				move_seq_array[i] = "F'"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == F2:
+				move_seq_array[i] = "F"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == F21:
+				move_seq_array[i] = "F"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == U0:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == U01:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == U02:
+				move_seq_array[i] = "U2"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == U03:
+				move_seq_array[i] = "U2"
+				move_seq_array[i-1] = ""
+			
+			if [one,two] == U1:
+				move_seq_array[i] = "U'"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == U11:
+				move_seq_array[i] = "U'"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == U2:
+				move_seq_array[i] = "U"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == U21:
+				move_seq_array[i] = "U"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == B0:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == B01:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == B02:
+				move_seq_array[i] = "B2"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == B03:
+				move_seq_array[i] = "B2"
+				move_seq_array[i-1] = ""
+			
+			if [one,two] == B1:
+				move_seq_array[i] = "B'"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == B11:
+				move_seq_array[i] = "B'"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == B2:
+				move_seq_array[i] = "B"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == B21:
+				move_seq_array[i] = "B"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == D0:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == D01:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == D02:
+				move_seq_array[i] = "D2"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == D03:
+				move_seq_array[i] = "D2"
+				move_seq_array[i-1] = ""
+			
+			if [one,two] == D1:
+				move_seq_array[i] = "D'"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == D11:
+				move_seq_array[i] = "D'"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == D2:
+				move_seq_array[i] = "D"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == D21:
+				move_seq_array[i] = "D"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == R0:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == R01:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == R02:
+				move_seq_array[i] = "R2"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == R03:
+				move_seq_array[i] = "R2"
+				move_seq_array[i-1] = ""
+			
+			if [one,two] == R1:
+				move_seq_array[i] = "R'"
+				move_seq_array[i-1] = ""
+			
+			if [one,two] == R11:
+				move_seq_array[i] = "R'"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == R2:
+				move_seq_array[i] = "R"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == R21:
+				move_seq_array[i] = "R"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == L0:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == L01:
+				move_seq_array[i] = ""
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == L02:
+				move_seq_array[i] = "L"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == L03:
+				move_seq_array[i] = "L2"
+				move_seq_array[i-1] = ""
+			
+			if [one,two] == L1:
+				move_seq_array[i] = "L'"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == L11:
+				move_seq_array[i] = "L'"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == L2:
+				move_seq_array[i] = "L"
+				move_seq_array[i-1] = ""
+				
+			if [one,two] == L21:
+				move_seq_array[i] = "L"
+				move_seq_array[i-1] = ""
+	
+	count = 0
+	for i in range(len(move_seq_array)):
+		if move_seq_array[i] == "":
+			pass
+		else:
+			new_move_seq += str(move_seq_array[i]) + " "
+			count += 1
+		
+	#print(cube.stringify())
+	#print("\nFull Solve Sequence: ")
+	#print(new_move_seq)
+	#print("Moves: " + "%d" %count)
+	return new_move_seq
 
