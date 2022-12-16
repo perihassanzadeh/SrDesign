@@ -25,6 +25,39 @@ secondpic=[]
 thirdpic=[]
 colors = []
 
+
+#Mapping the Cube for Corner Sequence
+def mapCubies():
+    #First Image
+    front[0:8]=firstpic[0:8]
+    front[4]='F'
+    right[0:8]=firstpic[9:17]
+    right[4]='R'
+    down[0:8]=firstpic[18:26]
+    down[4]='D'
+
+    #Second Image
+    back[0:8]=secondpic[0:8]
+    back[4]='B'
+    left[0:8]=secondpic[9:17]
+    left[7]=secondpic[10]
+    left[1]=secondpic[17]
+    left[4]='L'
+
+    #Third Image
+    up[0:8]=thirdpic[18:26]
+    up[7]=thirdpic[19]
+    up[1]=thirdpic[25]
+    up[4]='D'
+
+    #Append All Faces Together for Output
+    fullface.appned(up)
+    fullface.append(right)
+    fullface.append(front)
+    fullface.append(down)
+    fullface.append(left)
+    fullface.apend(back)
+
 ###
 # Opens camera capture and takes images of each cube face when space bar pressed 
 # Images stored in project directory
@@ -90,8 +123,6 @@ def findFaceColors():
                 #down[z]=[18+z]
 
 
-
-    print(fullface)
     print(colors)
 
 ###
