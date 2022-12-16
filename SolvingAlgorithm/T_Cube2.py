@@ -2,40 +2,39 @@
 # RubiksCube Class 
 import time
 from rubik_solver import utils
+
+
+
+
+
 class RubiksCube2:
 	"""
 		Initialize the Rubiks Cube with an array
 		
-		Input - Array size 54
+		Input - Self, Array size 54
 		Output - None
 	"""
 	def __init__(self, input_state):
 		self.CurrentArray = [""] * 54
 		state = [""] * 54
 		temp = [""] * 54
-		"""
-		for i in range(54):
-			state[i] = input_state[i]
-		
-		temp = state
-		
-		temp[0:9] = state[0:9]
-		temp[27:36] = state[9:18]
-		temp[18:27] = state[18:27]
-		temp[45:54] = state[27:36]
-		temp[9:18] = state[36:45]
-		temp[36:45] = state[45:54]
-		print(temp)
-		"""
 		
 		if input_state == "":
 			self.reset()
 		else:
+			
+			for i in range(54):
+				state[i] = input_state[i]
+				
 			for i in range(54):
 				temp[i] = input_state[i]
 				
-			for i in range(54):
-				state[i] = input_state[i]
+			temp[0:9] = state[0:9]
+			temp[27:36] = state[9:18]
+			temp[18:27] = state[18:27]
+			temp[45:54] = state[27:36]
+			temp[9:18] = state[36:45]
+			temp[36:45] = state[45:54]
 			
 			for i in range(54):
 				if temp[i] == 'F':
@@ -50,9 +49,17 @@ class RubiksCube2:
 					self.CurrentArray[i] = 'g'
 				if temp[i] == 'L':
 					self.CurrentArray[i] = 'b'
+					
 		self.update()
 		self.nextstep = 0
-				
+			
+	"""
+		Updates the Rubiks Cube to reorient edges and corners
+		
+		Input - Self
+		Output - None
+	"""
+		
 	def update(self):
 		# Set up so that FU is an array of two faces
 		# Edge FU -> [Front,Up]
@@ -82,12 +89,11 @@ class RubiksCube2:
 		self.BLD = [self.CurrentArray[45-1],self.CurrentArray[16-1],self.CurrentArray[52-1]]
 		
 		self.corner = [self.FRU,self.BRU,self.BLU,self.FLU,self.FRD,self.FLD,self.BLD,self.BRD]
-			
 		
 	"""
 		Reset the Rubiks Cube to solve state
 		
-		Input - None
+		Input - Self
 		Output - None
 	"""
 	def reset(self):
@@ -109,9 +115,9 @@ class RubiksCube2:
 		self.nextstep = 0
 		
 	"""
-		Determines if the cube is solved or not
+		Determines if the cube phase is solved
 		
-		Input - None
+		Input - Self
 		Output - None
 	"""
 	def solved(self):
@@ -123,15 +129,22 @@ class RubiksCube2:
 			return False
 				
 	"""
-		Retruns a string format of the cube state
+		Retruns a string format of the cube state ("roywgb")
 		
-		Input - None
+		Input - Self
 		Output - String
 	"""
 	def stringify(self):
 		state = "".join(self.CurrentArray)
 		return state
 		
+	"""
+		Retruns a string format of the cube state ("FBUDRL")
+		
+		Input - Self
+		Output - String
+	"""
+	
 	def stringify2(self):
 		state = ""
 		for i in range(54):
@@ -147,12 +160,12 @@ class RubiksCube2:
 				state += state.join('R')
 			if self.CurrentArray[i] == 'o':
 				state += state.join('B')
-		return state
-		
+		return state	
+	
 	"""
-		return the next step of the cube
+		Return the next step of the cube
 		
-		Input - none
+		Input - Self
 		Output - Integer
 	"""
 	def next_step(self):
@@ -160,11 +173,39 @@ class RubiksCube2:
 		return self.nextstep
 		
 	"""
-		Reorientate the entire cube
+		Takes in a list of moves that has the ability to move each side
+		based on an integer input.
 		
-		Input - None
+		Input - self, list
 		Output - None
 	"""
+	def apply_moves(self, moves):
+		for a in moves:
+			if a == 0:
+				self.CW_Front()
+			if a == 1:
+				self.CCW_Front()
+			if a == 2:
+				self.CW_Back()
+			if a == 3:
+				self.CCW_Back()
+			if a == 4:
+				self.CW_Right()
+			if a == 5:
+				self.CCW_Right()
+			if a == 6:
+				self.CW_Left()
+			if a == 7:
+				self.CCW_Left()
+			if a == 8:
+				self.CW_Up()
+			if a == 9:
+				self.CCW_Up()
+			if a == 10:
+				self.CW_Down()
+			if a == 11:
+				self.CCW_Down()
+	
 	def CW_Front(self):
 		# Setting a temp variable
 		temp = [""] * 54
@@ -596,6 +637,14 @@ class RubiksCube2:
 				return 0
 				
 			return self.traverse(cube_str,depth + 1,target,i)
+	
+	"""
+	Recover the orientation of the cube 
+		
+	Input - self
+	Ouftput - None
+	"""
+
 	def get_orientataion(self):
 		state = [0] * 40
 		
@@ -2477,6 +2526,13 @@ class RubiksCube2:
 		
 		return state
 
+"""
+	Uses CFOP switch cases in order position each edge and corner in
+	its according position after scanning the cube orientation. 
+		
+	Input - string, array of strings
+	Ouftput - None
+"""
 def CFOP(moves):
 	orientation = ["U","L","F","R","B","D"]
 	move_sequence = ""
@@ -2681,7 +2737,14 @@ def CFOP(moves):
 		
 	return move_sequence
 					
-
+"""
+	The call function from the main serial communication program in
+	order to return a move sequence. Utlizes Rubiks cube object and 
+	other Rubik functions to return an optimized solve sequence.
+		
+	Input - string
+	Ouftput - None
+"""
 def solve_CFOP(state):
 	cube = RubiksCube2(state)
 	#print("\nFull Color State: " + state)
@@ -2709,7 +2772,27 @@ def solve_CFOP(state):
 			move_seq_array.append(temp)
 			temp = ""
 			
+	final_move_seq = redundancy_check(move_seq, move_seq_array)
 	
+	print("Move Sequeunce:")
+	print(final_move_seq)
+			
+"""
+	Check on any redundancies in for final move sequence. Redundancies 
+	include:
+		eg. "U U" = "U2" 
+			"U U'" = No Move
+			"2U U" = "U'"
+			"U U U U" = No Move
+			
+	This eliminates unnecessary moves that may have been appended to the
+	original move sequence.
+	
+	Input - self, string, array of strings
+	Output - None
+"""
+def redundancy_check(move_seq, move_seq_array):
+
 	F0 = ["F","F'"]
 	F01 = ["F'","F"]
 	F02 = ["F","F"]
@@ -3134,6 +3217,7 @@ def solve_CFOP(state):
 				move_seq_array[i-1] = ""
 	
 	count = 0
+	new_move_seq = ""
 	for i in range(len(move_seq_array)):
 		if move_seq_array[i] == "":
 			pass
