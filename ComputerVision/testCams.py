@@ -5,12 +5,12 @@
 #Imported Libraries 
 import cv2 
 import numpy as np
-import kociemba
-import serial
-import time
+#import kociemba
+#import serial
+#import time
 
 #Setup Serial Communications and video capture
-ser = serial.Serial(port = 'COM6', baudrate=9600)
+#ser = serial.Serial(port = 'COM6', baudrate=9600)
 vid =  cv2.VideoCapture(1) 
 vid.set(cv2.CAP_PROP_EXPOSURE, -4)
 #State Arrays (Cube Orientation / Colors)
@@ -151,7 +151,7 @@ def solveSeq():
 
     print(fullfacee)
 
-    return kociemba.solve(fullfacee)
+    #return kociemba.solve(fullfacee)
 
 
 ###
@@ -159,22 +159,23 @@ def solveSeq():
 # Sends Move Seq to motors via Serial Communication with AtMega
 ###
 def main():
-    while True:
-        startT = time.time()
-        print("Ready")
-        line = ser.readline()
+    #while True:
+        #startT = time.time()
+        #print("Ready")
+        #line = ser.readline()
         #print(line.decode("utf-8"))
-        takeImages()    
+        #takeImages()    
         findFaceColors()
         #append all faces
         print("Complete Color State")
-        moves = solveSeq()
+        #moves = solveSeq()
+        solveSeq()
         #print("Move Sequence from Solving Algorithm")
-        print(moves) 
-        exectutionT = time.time()-startT
-        print("time = " + str(exectutionT) + " seconds")
+        #print(moves) 
+        #exectutionT = time.time()-startT
+        #print("time = " + str(exectutionT) + " seconds")
         #moves = "R U' L2"
-        ser.write(moves.encode())
+        #ser.write(moves.encode())
 
 
 if __name__ == '__main__':
